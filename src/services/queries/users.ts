@@ -1,9 +1,22 @@
 import { client } from '$services/redis';
 import type { CreateUserAttrs } from '$services/types';
 import { genId } from '$services/utils';
-import { usersKey, usernamesUniqueKey } from '$services/keys';
+import { usersKey, usernamesUniqueKey, usernameKey } from '$services/keys';
 
-export const getUserByUsername = async (username: string) => {};
+export const getUserByUsername = async (username: string) => {
+  //get score to username from sort set
+  const desimalId = await client.zScore(usernameKey(),username)
+  //throw error if not found
+  if(!desimalId){
+    throw new Error('this email not exist')
+  }
+  //convert id to hex string to be seach in hash 
+  const id = desimalId.toString(16)
+
+  //search by id to hash 
+  const user = await client.hGetAll(usersKey(id))
+  return deSerialize(id,user)
+};
 
 export const getUserById = async (id: string) => {
   const user = await client.hGetAll(usersKey(id))
@@ -20,6 +33,11 @@ export const createUser = async (attrs:CreateUserAttrs) => {
   await client.hSet(usersKey(id), serialize(attrs))
   // save new user name beacuse if any one return signup again
   await client.sAdd(usernamesUniqueKey(),attrs.username)
+  //add the username and id in sorte set and convert id form hex string to hex number
+  await client.zAdd(usernameKey(),{
+    value:attrs.username ,
+    score:parseInt(id,16)
+  })
   return id;
 };
 

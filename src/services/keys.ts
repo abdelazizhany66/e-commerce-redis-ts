@@ -4,3 +4,6 @@ export const sessionsKey = (sessionId:string)=> `sessioncache${sessionId}`
 export const itemsKey = (itemId:string)=> `item#${itemId}`
 export const usernamesUniqueKey = ()=> 'username:unique'
 export const userLikesKey = (userId:string)=> `user:like#${userId}` 
+export const usernameKey = ()=> 'username'
+export const itemsByViewKey = ()=> `item:view`
+export const itemByEndingAtKey = ()=> 'item:endingat'
