@@ -6,4 +6,6 @@ export const usernamesUniqueKey = ()=> 'username:unique'
 export const userLikesKey = (userId:string)=> `user:like#${userId}` 
 export const usernameKey = ()=> 'username'
 export const itemsByViewKey = ()=> `item:view`
+export const itemsViewsKey = (itemId:string)=> `item:view${itemId}`
 export const itemByEndingAtKey = ()=> 'item:endingat'
+export const bidHistoryId = (itemId:string)=> `history${itemId}`
